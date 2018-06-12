@@ -37,16 +37,19 @@ spec:
             - --listen-address=0.0.0.0:{{ contiv_api_proxy_port }}
             - --tls-key-file=/var/contiv/auth_proxy_key.pem
             - --tls-certificate=/var/contiv/auth_proxy_cert.pem
-            - --data-store-address=$(CONTIV_ETCD)
+            - --data-store-address=$(STORE_URL)
+            - --data-store-driver=$(STORE_DRIVER)
             - --netmaster-address=127.0.0.1:{{ contiv_netmaster_port }}
           env:
             - name: NO_NETMASTER_STARTUP_CHECK
               value: "0"
-            - name: CONTIV_ETCD
+            - name: STORE_URL
               valueFrom:
                 configMapKeyRef:
                   name: contiv-config
-                  key: cluster_store
+                  key: contiv_etcd
+            - name: STORE_DRIVER
+              value: etcd
           securityContext:
             privileged: false
           volumeMounts:

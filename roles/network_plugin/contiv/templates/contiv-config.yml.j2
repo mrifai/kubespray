@@ -7,18 +7,21 @@ metadata:
   name: contiv-config
   namespace: kube-system
 data:
+  contiv_mode: kubernetes
+  contiv_fwdmode: routing
+  contiv_netmode: vxlan
   # The location of your cluster store. This is set to the
   # avdertise-client value below from the contiv-etcd service.
   # Change it to an external etcd/consul instance if required.
-  cluster_store: "etcd://127.0.0.1:{{ contiv_etcd_listen_port }}"
+  contiv_etcd: "http://127.0.0.1:{{ contiv_etcd_listen_port }}"
   # The CNI network configuration to install on each node.
-  cni_config: |-
+  contiv_cni_config: |-
     {
       "cniVersion": "{{ contiv_cni_version }}",
       "name": "contiv-net",
       "type": "contivk8s"
     }
-  config: |-
+  contiv_k8s_config: |-
     {
        "K8S_API_SERVER": "{{ kube_apiserver_endpoint }}",
        "K8S_CA": "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt",

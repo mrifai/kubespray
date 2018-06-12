@@ -33,28 +33,48 @@ spec:
       containers:
         - name: contiv-netmaster
           image: {{ contiv_image_repo }}:{{ contiv_image_tag }}
-          args:
-            - -m
-            - -pkubernetes
           env:
-            - name: CONTIV_ETCD
+            - name: CONTIV_ROLE
+              value: netmaster
+            - name: CONTIV_NETMASTER_MODE
               valueFrom:
                 configMapKeyRef:
                   name: contiv-config
-                  key: cluster_store
-            - name: CONTIV_CONFIG
+                  key: contiv_mode
+            - name: CONTIV_NETMASTER_ETCD_ENDPOINTS
               valueFrom:
                 configMapKeyRef:
                   name: contiv-config
-                  key: config
+                  key: contiv_etcd
+            - name: CONTIV_K8S_CONFIG
+              valueFrom:
+                configMapKeyRef:
+                  name: contiv-config
+                  key: contiv_k8s_config
+            - name: CONTIV_NETMASTER_FORWARD_MODE
+              valueFrom:
+                configMapKeyRef:
+                  name: contiv-config
+                  key: contiv_fwdmode
+            - name: CONTIV_NETMASTER_NET_MODE
+              valueFrom:
+                configMapKeyRef:
+                  name: contiv-config
+                  key: contiv_netmode
           securityContext:
-            privileged: true
+            privileged: false
           volumeMounts:
             - mountPath: /var/contiv
               name: var-contiv
+              readOnly: false
+            - mountPath: /var/log/contiv
+              name: var-log-contiv
               readOnly: false
       volumes:
         # Used by contiv-netmaster
         - name: var-contiv
           hostPath:
             path: /var/contiv
+        - name: var-log-contiv
+          hostPath:
+            path: /var/log/contiv
